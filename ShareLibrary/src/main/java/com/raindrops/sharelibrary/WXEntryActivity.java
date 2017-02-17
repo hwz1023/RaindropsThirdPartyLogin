@@ -8,7 +8,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.raindrops.sharelibrary.util.LoginUtil;
-import com.raindrops.sharelibrary.util.ShareConfig;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
@@ -42,24 +41,30 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 
     @Override
     public void onResp(BaseResp baseResp) {
-        int result = 0;
         String msg = "";
-        SendAuth.Resp resp = (SendAuth.Resp) baseResp;
-        switch (resp.errCode) {
-            case BaseResp.ErrCode.ERR_OK:
-                //			result = R.string.errcode_success
-                LoginUtil.getAccessToken(resp.code);
-                msg = "授权成功";
-                break;
-            case BaseResp.ErrCode.ERR_USER_CANCEL://用户取消
-                msg = "用户取消授权";
-                break;
-            case BaseResp.ErrCode.ERR_AUTH_DENIED:
-                msg = "用户拒绝授权";
-                break;
-            default:
-                msg = "授权失败";
-                break;
+        if (baseResp instanceof SendAuth.Resp) {
+            SendAuth.Resp resp = (SendAuth.Resp) baseResp;
+            switch (resp.errCode) {
+                case BaseResp.ErrCode.ERR_OK:
+                    //			result = R.string.errcode_success
+                    LoginUtil.getAccessToken(resp.code);
+                    break;
+                case BaseResp.ErrCode.ERR_USER_CANCEL://用户取消
+                    msg = "用户取消授权";
+                    break;
+                case BaseResp.ErrCode.ERR_AUTH_DENIED:
+                    msg = "用户拒绝授权";
+                    break;
+                default:
+                    msg = "授权失败";
+                    break;
+            }
+        } else {
+            if (BaseResp.ErrCode.ERR_OK == baseResp.errCode) {
+                ShareConfig.getInstance().getShareCallBack().shareSuccess();
+            } else {
+                ShareConfig.getInstance().getShareCallBack().shareError();
+            }
         }
         Log.e("msg", msg);
         if (msg.length() > 0)

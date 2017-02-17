@@ -7,6 +7,9 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.raindrops.sharelibrary.ShareConfig;
+import com.raindrops.sharelibrary.ShareIntentStaticCode;
+import com.raindrops.sharelibrary.callback.IThirdPartyLoginCallback;
 import com.sina.weibo.sdk.auth.AuthInfo;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.auth.WeiboAuthListener;
@@ -57,6 +60,9 @@ public class LoginUtil {
 
     private IThirdPartyLoginCallback iThirdPartyLoginCallback;
 
+    private IUiListener uiListener;
+
+
     private LoginUtil() {
     }
 
@@ -64,14 +70,15 @@ public class LoginUtil {
         return SingleInstance.instance;
     }
 
-    public void initLoginUtil(Context mContext, IThirdPartyLoginCallback iThirdPartyLoginCallback) {
+    public void initLoginUtil(Context mContext, final IThirdPartyLoginCallback
+            iThirdPartyLoginCallback) {
         this.iThirdPartyLoginCallback = iThirdPartyLoginCallback;
         this.mContext = mContext;
         api = WXAPIFactory.createWXAPI(mContext, ShareConfig.getInstance().wechatAPPID);
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 //                .addInterceptor(new LoggerInterceptor("TAG"))
                 .connectTimeout(10, TimeUnit.SECONDS)
-                .readTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(20, TimeUnit.SECONDS)
                 //其他配置
                 .build();
         OkHttpUtils.initClient(okHttpClient);
@@ -80,6 +87,26 @@ public class LoginUtil {
         authInfo = new AuthInfo(mContext, ShareConfig.getInstance().weiboKey, ShareConfig
                 .getInstance().weiboRedirectUrl,
                 ShareConfig.getInstance().weiboScope);
+        uiListener = new IUiListener() {
+            @Override
+            public void onComplete(Object o) {
+                JSONObject jsonObject = (JSONObject) o;
+                initOpenidAndToken(jsonObject);
+                getQQUserInfo();
+            }
+
+            @Override
+            public void onError(UiError uiError) {
+                iThirdPartyLoginCallback.onError(-100, ShareIntentStaticCode.THIDR_PARTY_QQ,
+                        "授权失败");
+            }
+
+            @Override
+            public void onCancel() {
+                iThirdPartyLoginCallback.onError(-100, ShareIntentStaticCode.THIDR_PARTY_QQ,
+                        "授权失败");
+            }
+        };
     }
 
     private static class SingleInstance {
@@ -87,20 +114,8 @@ public class LoginUtil {
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        Tencent.onActivityResultData(requestCode, resultCode, data, new IUiListener() {
-            @Override
-            public void onComplete(Object o) {
-            }
-
-            @Override
-            public void onError(UiError uiError) {
-            }
-
-            @Override
-            public void onCancel() {
-            }
-        });
+        Log.e("onActivityResult", "onActivityResult");
+        Tencent.onActivityResultData(requestCode, resultCode, data, uiListener);
 
         if (mSsoHandler != null) {
             mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
@@ -119,19 +134,22 @@ public class LoginUtil {
                     getWeiboUserInfo(mAccessToken.getToken(), mAccessToken.getUid());
                 } else {
                     // 当您注册的应用程序签名不正确时，就会收到 Code，请确保签名正确
-                    iThirdPartyLoginCallback.onError(-100, 2, "授权失败");
+                    iThirdPartyLoginCallback.onError(-100, ShareIntentStaticCode
+                            .THIDR_PARTY_WEIBO, "授权失败");
                 }
 
             }
 
             @Override
             public void onWeiboException(WeiboException e) {
-
+                iThirdPartyLoginCallback.onError(-100, ShareIntentStaticCode
+                        .THIDR_PARTY_WEIBO, "授权失败");
             }
 
             @Override
             public void onCancel() {
-
+                iThirdPartyLoginCallback.onError(-100, ShareIntentStaticCode
+                        .THIDR_PARTY_WEIBO, "授权失败");
             }
         });
     }
@@ -150,7 +168,8 @@ public class LoginUtil {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        iThirdPartyLoginCallback.onError(-100, 2, "授权失败");
+                        iThirdPartyLoginCallback.onError(-100, ShareIntentStaticCode
+                                .THIDR_PARTY_WEIBO, "授权失败");
                     }
 
                     @Override
@@ -158,7 +177,8 @@ public class LoginUtil {
                         try {
                             JSONObject jsonObject = new JSONObject(response);
                             if (!jsonObject.isNull("error_code")) {
-                                iThirdPartyLoginCallback.onError(-100, 2, "授权失败");
+                                iThirdPartyLoginCallback.onError(-100, ShareIntentStaticCode
+                                        .THIDR_PARTY_WEIBO, "授权失败");
                             } else {
                                 if (iThirdPartyLoginCallback != null)
                                     iThirdPartyLoginCallback.onComplete(
@@ -169,7 +189,8 @@ public class LoginUtil {
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            iThirdPartyLoginCallback.onError(-100, 2, "授权失败");
+                            iThirdPartyLoginCallback.onError(-100, ShareIntentStaticCode
+                                    .THIDR_PARTY_WEIBO, "授权失败");
                         }
                     }
                 });
@@ -186,24 +207,7 @@ public class LoginUtil {
     public void loginToQQ() {
         if (!mTencent.isSessionValid()) {
             Log.e("loginToQQ", "loginToQQ");
-            mTencent.login((Activity) mContext, "get_simple_userinfo", new IUiListener() {
-                @Override
-                public void onComplete(Object o) {
-                    JSONObject jsonObject = (JSONObject) o;
-                    initOpenidAndToken(jsonObject);
-                    getQQUserInfo();
-                }
-
-                @Override
-                public void onError(UiError uiError) {
-                    Log.e("loginToQQ e", uiError.errorMessage);
-                }
-
-                @Override
-                public void onCancel() {
-
-                }
-            });
+            mTencent.login((Activity) mContext, "get_simple_userinfo", uiListener);
         }
     }
 
@@ -244,7 +248,8 @@ public class LoginUtil {
                                 "3", jsonObject.getString("figureurl_qq_2"), "n"
                         );
                     } else {
-                        iThirdPartyLoginCallback.onError(ret, 3, jsonObject.getString("msg"));
+                        iThirdPartyLoginCallback.onError(ret, ShareIntentStaticCode
+                                .THIDR_PARTY_QQ, jsonObject.getString("msg"));
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -253,12 +258,14 @@ public class LoginUtil {
 
             @Override
             public void onError(UiError uiError) {
-                iThirdPartyLoginCallback.onError(uiError.errorCode, 3, uiError.errorMessage);
+                iThirdPartyLoginCallback.onError(uiError.errorCode, ShareIntentStaticCode
+                        .THIDR_PARTY_QQ, uiError.errorMessage);
             }
 
             @Override
             public void onCancel() {
-                iThirdPartyLoginCallback.onError(-100, 3, "授权失败");
+                iThirdPartyLoginCallback.onError(-100, ShareIntentStaticCode
+                        .THIDR_PARTY_QQ, "授权失败");
             }
         });
     }
@@ -279,7 +286,9 @@ public class LoginUtil {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        LoginUtil.getInstance().iThirdPartyLoginCallback.onError(-100, 1,
+                        LoginUtil.getInstance().iThirdPartyLoginCallback.onError(-100,
+                                ShareIntentStaticCode
+                                        .THIDR_PARTY_WECHAT,
                                 "授权失败");
                     }
 
@@ -288,14 +297,18 @@ public class LoginUtil {
                         try {
                             JSONObject jsonObject = new JSONObject(response);
                             if (!jsonObject.isNull("errcode")) {
-                                LoginUtil.getInstance().iThirdPartyLoginCallback.onError(-100, 1,
+                                LoginUtil.getInstance().iThirdPartyLoginCallback.onError(-100,
+                                        ShareIntentStaticCode
+                                                .THIDR_PARTY_WECHAT,
                                         "授权失败");
                             } else {
                                 getUserInfo(jsonObject.getString("access_token"), jsonObject
                                         .getString("openid"));
                             }
                         } catch (JSONException e) {
-                            LoginUtil.getInstance().iThirdPartyLoginCallback.onError(-100, 1,
+                            LoginUtil.getInstance().iThirdPartyLoginCallback.onError(-100,
+                                    ShareIntentStaticCode
+                                            .THIDR_PARTY_WECHAT,
                                     "授权失败");
                             e.printStackTrace();
                         }
@@ -318,16 +331,21 @@ public class LoginUtil {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        LoginUtil.getInstance().iThirdPartyLoginCallback.onError(-100, 1,
+                        LoginUtil.getInstance().iThirdPartyLoginCallback.onError(-100,
+                                ShareIntentStaticCode
+                                        .THIDR_PARTY_WECHAT,
                                 "授权失败");
                     }
 
                     @Override
                     public void onResponse(String response, int id) {
                         try {
+                            Log.e("getUserInfo", response);
                             JSONObject jsonObject = new JSONObject(response);
                             if (!jsonObject.isNull("errcode")) {
-                                LoginUtil.getInstance().iThirdPartyLoginCallback.onError(-100, 1,
+                                LoginUtil.getInstance().iThirdPartyLoginCallback.onError(-100,
+                                        ShareIntentStaticCode
+                                                .THIDR_PARTY_WECHAT,
                                         "授权失败");
                             } else {
                                 LoginUtil.getInstance().iThirdPartyLoginCallback.onComplete(
@@ -340,7 +358,9 @@ public class LoginUtil {
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            LoginUtil.getInstance().iThirdPartyLoginCallback.onError(-100, 1,
+                            LoginUtil.getInstance().iThirdPartyLoginCallback.onError(-100,
+                                    ShareIntentStaticCode
+                                            .THIDR_PARTY_WECHAT,
                                     "授权失败");
                         }
                     }
