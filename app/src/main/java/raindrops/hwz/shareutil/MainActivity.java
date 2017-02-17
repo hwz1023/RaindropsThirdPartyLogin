@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         bundle.putInt(ShareIntentStaticCode.THIDR_PARTY_PLATFORM, ShareIntentStaticCode
                 .THIDR_PARTY_QQ);
         bundle.putInt(ShareIntentStaticCode.THIDR_PARTY_TYPE, ShareIntentStaticCode
-                .THIDR_PARTY_LOGIN);
+                .THIDR_PARTY_SHARE);
         bundle.putString(ShareIntentStaticCode.THIDR_PARTY_SHARE_WEBURL, "http://www.21msw.com");
         bundle.putString(ShareIntentStaticCode.THIDR_PARTY_SHARE_TITLE, "测试标题");
         bundle.putString(ShareIntentStaticCode.THIDR_PARTY_SHARE_DESCRIPTION, "测试");
