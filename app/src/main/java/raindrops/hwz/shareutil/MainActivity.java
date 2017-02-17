@@ -21,10 +21,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ShareConfig.getInstance().initWechatAPPID("wx7e58d6e363b2aa46",
-                "1df8537ec5a6e5b6bfae8897c2995c4a")
-                .initQQAPPID("1105267495")
-                .initWeibo("320958200", "http://www.21msw.com", "");
+        ShareConfig.getInstance().initWechatAPPID("xx",
+                "xx")
+                .initQQAPPID("xx")
+                .initWeibo("xx", "http://www.xx.com", "");
 
         ShareConfig.getInstance().bindLoginCallback(new ThirdPartyLoginCallback() {
             @Override

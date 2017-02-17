@@ -45,7 +45,7 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
 
-                <data android:scheme="tencent1105267495"/>
+                <data android:scheme="tencent你的APPID"/>
             </intent-filter>
         </activity>
         <activity
