@@ -30,6 +30,7 @@ public class LoginShareActivity extends Activity implements IWeiboHandler.Respon
         bundle = savedInstanceState == null ? getIntent().getExtras() : savedInstanceState;
         thirdPartyPlatForm = bundle.getInt(ShareIntentStaticCode.THIDR_PARTY_PLATFORM);
         thirdPartyType = bundle.getInt(ShareIntentStaticCode.THIDR_PARTY_TYPE);
+        ShareConfig.getInstance().setThirdPartyType(thirdPartyType);
         if (thirdPartyType == ShareIntentStaticCode.THIDR_PARTY_LOGIN) {
             loginUtil = LoginUtil.getInstance();
             loginUtil.initLoginUtil(this, ShareConfig.getInstance().getLoginCallBack());

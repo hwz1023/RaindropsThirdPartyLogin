@@ -337,6 +337,7 @@ public class LoginUtil {
      * @param openid
      */
     public static void getUserInfo(String access_token, String openid) {
+        Log.e("access_token", access_token);
         OkHttpUtils.get().url("https://api.weixin.qq.com/sns/userinfo")
                 .addParams("access_token", access_token)
                 .addParams("openid", openid)

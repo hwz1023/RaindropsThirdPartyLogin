@@ -31,6 +31,8 @@ public class ShareConfig {
 
     private IThirdPartyShareCallback thirdPartyShareCallback;
 
+    private int thirdPartyType;
+
 
     private static class ShareConfigSignle {
         private static ShareConfig instance = new ShareConfig();
@@ -91,4 +93,11 @@ public class ShareConfig {
         return ShareConfig.getInstance().getShareCallBack() != null;
     }
 
+    public int getThirdPartyType() {
+        return thirdPartyType;
+    }
+
+    public void setThirdPartyType(int thirdPartyType) {
+        this.thirdPartyType = thirdPartyType;
+    }
 }

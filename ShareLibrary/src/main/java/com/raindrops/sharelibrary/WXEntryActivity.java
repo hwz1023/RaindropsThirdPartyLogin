@@ -40,35 +40,43 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
     @Override
     public void onResp(BaseResp baseResp) {
         String msg = "";
-        if (baseResp instanceof SendAuth.Resp) {
-            SendAuth.Resp resp = (SendAuth.Resp) baseResp;
-            switch (resp.errCode) {
-                case BaseResp.ErrCode.ERR_OK:
-                    //			result = R.string.errcode_success
+        switch (baseResp.errCode) {
+            case BaseResp.ErrCode.ERR_OK:
+                //			result = R.string.errcode_success
+                if (baseResp instanceof SendAuth.Resp && ShareConfig.getInstance()
+                        .getThirdPartyType() == ShareIntentStaticCode
+                        .THIDR_PARTY_LOGIN) {
+                    SendAuth.Resp resp = (SendAuth.Resp) baseResp;
                     LoginUtil.getAccessToken(resp.code);
-                    break;
-                case BaseResp.ErrCode.ERR_USER_CANCEL://用户取消
-                    msg = "用户取消授权";
-                    break;
-                case BaseResp.ErrCode.ERR_AUTH_DENIED:
-                    msg = "用户拒绝授权";
-                    break;
-                default:
-                    msg = "授权失败";
-                    break;
-            }
-        } else {
-            if (BaseResp.ErrCode.ERR_OK == baseResp.errCode) {
-                if (ShareConfig.isShareCallBack())
-                    ShareConfig.getInstance().getShareCallBack().shareSuccess();
+                } else {
+                    if (ShareConfig.isShareCallBack())
+                        ShareConfig.getInstance().getShareCallBack().shareSuccess();
+                }
+                break;
+            case BaseResp.ErrCode.ERR_USER_CANCEL://用户取消
+                msg = "用户取消授权";
+                break;
+            case BaseResp.ErrCode.ERR_AUTH_DENIED:
+                msg = "用户拒绝授权";
+                break;
+            default:
+                msg = "授权失败";
+                break;
+        }
+        Log.e("msg", msg);
+        if (msg.length() > 0) {
+            if (ShareConfig.getInstance().getThirdPartyType() == ShareIntentStaticCode
+                    .THIDR_PARTY_LOGIN) {
+                Toast.makeText(this, msg, Toast.LENGTH_SHORT).
+                        show();
+                ShareConfig.getInstance().getLoginCallBack().onError(-100,
+                        ShareIntentStaticCode
+                                .THIDR_PARTY_WECHAT, msg);
             } else {
                 if (ShareConfig.isShareCallBack())
                     ShareConfig.getInstance().getShareCallBack().shareError();
             }
         }
-        Log.e("msg", msg);
-        if (msg.length() > 0)
-            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
         finish();
     }
 
