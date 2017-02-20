@@ -63,11 +63,11 @@ public class MainActivity extends AppCompatActivity {
                 .THIDR_PARTY_QQ);
         bundle.putInt(ShareIntentStaticCode.THIDR_PARTY_TYPE, ShareIntentStaticCode
                 .THIDR_PARTY_SHARE);
-        bundle.putString(ShareIntentStaticCode.THIDR_PARTY_SHARE_WEBURL, "http://www.21msw.com");
+        bundle.putString(ShareIntentStaticCode.THIDR_PARTY_SHARE_WEBURL, "http://www.xx.com");
         bundle.putString(ShareIntentStaticCode.THIDR_PARTY_SHARE_TITLE, "测试标题");
         bundle.putString(ShareIntentStaticCode.THIDR_PARTY_SHARE_DESCRIPTION, "测试");
-        bundle.putString(ShareIntentStaticCode.THIDR_PARTY_SHARE_IMAGEURL, "http://www.21msw" +
-                ".com/cvplayer/msw_logo.png");
+        bundle.putString(ShareIntentStaticCode.THIDR_PARTY_SHARE_IMAGEURL, "http://www.xx" +
+                ".com/xx/xx.png");
         ShareConfig.newInstance(this, bundle);
     }
 }

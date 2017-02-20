@@ -11,7 +11,6 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.raindrops.sharelibrary.ShareConfig;
 import com.raindrops.sharelibrary.ShareIntentStaticCode;
-import com.raindrops.sharelibrary.callback.IThirdPartyShareCallback;
 import com.sina.weibo.sdk.api.WebpageObject;
 import com.sina.weibo.sdk.api.WeiboMultiMessage;
 import com.sina.weibo.sdk.api.share.IWeiboHandler;
@@ -52,11 +51,9 @@ public class ShareUtil {
      * 微博微博分享接口实例
      */
     private IWeiboShareAPI mWeiboShareAPI = null;
-    private IThirdPartyShareCallback thirdPartyShareCallback;
 
-    public ShareUtil(Context mContext, IThirdPartyShareCallback thirdPartyShareCallback) {
+    public ShareUtil(Context mContext) {
         this.mContext = mContext;
-        this.thirdPartyShareCallback = thirdPartyShareCallback;
         api = WXAPIFactory.createWXAPI(mContext, ShareConfig.getInstance().wechatAPPID);
         // 创建微博分享接口实例
         mWeiboShareAPI = WeiboShareSDK.createWeiboAPI(mContext, ShareConfig.getInstance().weiboKey);
@@ -66,17 +63,20 @@ public class ShareUtil {
         uiListener = new IUiListener() {
             @Override
             public void onComplete(Object o) {
-                ShareConfig.getInstance().getShareCallBack().shareSuccess();
+                if (ShareConfig.isShareCallBack())
+                    ShareConfig.getInstance().getShareCallBack().shareSuccess();
             }
 
             @Override
             public void onError(UiError uiError) {
-                ShareConfig.getInstance().getShareCallBack().shareError();
+                if (ShareConfig.isShareCallBack())
+                    ShareConfig.getInstance().getShareCallBack().shareError();
             }
 
             @Override
             public void onCancel() {
-                ShareConfig.getInstance().getShareCallBack().shareError();
+                if (ShareConfig.isShareCallBack())
+                    ShareConfig.getInstance().getShareCallBack().shareError();
             }
         };
     }
@@ -97,7 +97,8 @@ public class ShareUtil {
                 .into(new SimpleTarget<byte[]>(120, 120) {
                     public void onLoadFailed(Exception e, Drawable errorDrawable) {
                         super.onLoadFailed(e, errorDrawable);
-                        ShareConfig.getInstance().getShareCallBack().shareError();
+                        if (ShareConfig.isShareCallBack())
+                            ShareConfig.getInstance().getShareCallBack().shareError();
                     }
 
                     @Override
@@ -120,13 +121,16 @@ public class ShareUtil {
                 });
     }
 
-    public void shareToQQ(String webUrl, String title, String description, String imageUrl) {
+    public void shareToQQ(String webUrl, String title, String description, String imageUrl, int
+            type) {
         Bundle params = new Bundle();
         params.putInt(QQShare.SHARE_TO_QQ_KEY_TYPE, QQShare.SHARE_TO_QQ_TYPE_DEFAULT);
         params.putString(QQShare.SHARE_TO_QQ_TITLE, title);
         params.putString(QQShare.SHARE_TO_QQ_SUMMARY, description);
         params.putString(QQShare.SHARE_TO_QQ_TARGET_URL, webUrl);
         params.putString(QQShare.SHARE_TO_QQ_IMAGE_URL, imageUrl);
+        if (type == ShareIntentStaticCode.THIDR_PARTY_QQ_ZONE)
+            params.putInt(QQShare.SHARE_TO_QQ_EXT_INT, QQShare.SHARE_TO_QQ_FLAG_QZONE_AUTO_OPEN);
         mTencent.shareToQQ((Activity) mContext, params, uiListener);
     }
 
@@ -143,7 +147,8 @@ public class ShareUtil {
                     @Override
                     public void onLoadFailed(Exception e, Drawable errorDrawable) {
                         super.onLoadFailed(e, errorDrawable);
-                        ShareConfig.getInstance().getShareCallBack().shareError();
+                        if (ShareConfig.isShareCallBack())
+                            ShareConfig.getInstance().getShareCallBack().shareError();
                     }
 
                     @Override

@@ -35,7 +35,7 @@ public class LoginShareActivity extends AppCompatActivity implements IWeiboHandl
             loginUtil.initLoginUtil(this, ShareConfig.getInstance().getLoginCallBack());
             login();
         } else if (thirdPartyType == ShareIntentStaticCode.THIDR_PARTY_SHARE) {
-            shareUtil = new ShareUtil(this, ShareConfig.getInstance().getShareCallBack());
+            shareUtil = new ShareUtil(this);
             if (savedInstanceState != null)
                 shareUtil.weiboResponse(getIntent(), this);
             share();
@@ -71,7 +71,7 @@ public class LoginShareActivity extends AppCompatActivity implements IWeiboHandl
             imageUrl = bundle.getString(THIDR_PARTY_SHARE_IMAGEURL);
         switch (thirdPartyPlatForm) {
             case ShareIntentStaticCode.THIDR_PARTY_QQ:
-                shareUtil.shareToQQ(webUrl, title, des, imageUrl);
+                shareUtil.shareToQQ(webUrl, title, des, imageUrl, thirdPartyPlatForm);
                 break;
             case ShareIntentStaticCode.THIDR_PARTY_WECHAT_FRIEND_CIRCLE:
             case ShareIntentStaticCode.THIDR_PARTY_WECHAT:
@@ -111,9 +111,11 @@ public class LoginShareActivity extends AppCompatActivity implements IWeiboHandl
         Log.e("BaseResponse", "baseResponse.errCode" + baseResponse.errCode + "\n"
                 + "baseResponse.errMsg" + baseResponse.errMsg);
         if (baseResponse.errCode == WBConstants.ErrorCode.ERR_OK) {
-            ShareConfig.getInstance().getShareCallBack().shareSuccess();
+            if (ShareConfig.isShareCallBack())
+                ShareConfig.getInstance().getShareCallBack().shareSuccess();
         } else {
-            ShareConfig.getInstance().getShareCallBack().shareError();
+            if (ShareConfig.isShareCallBack())
+                ShareConfig.getInstance().getShareCallBack().shareError();
         }
     }
 

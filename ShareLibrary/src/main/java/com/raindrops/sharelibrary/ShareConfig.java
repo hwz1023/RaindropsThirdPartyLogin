@@ -82,5 +82,13 @@ public class ShareConfig {
         mContext.startActivity(intent);
     }
 
+    /**
+     * 判断shareCallback是否注册
+     *
+     * @return
+     */
+    public static boolean isShareCallBack() {
+        return ShareConfig.getInstance().getShareCallBack() != null;
+    }
 
 }

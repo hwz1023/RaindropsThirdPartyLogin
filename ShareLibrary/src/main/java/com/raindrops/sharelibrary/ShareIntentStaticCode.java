@@ -40,6 +40,11 @@ public interface ShareIntentStaticCode {
     int THIDR_PARTY_SHARE = 1000006;
 
     /**
+     * QQ空间
+     */
+    int THIDR_PARTY_QQ_ZONE = 1000007;
+
+    /**
      * 类型 分享或者登陆
      */
     String THIDR_PARTY_TYPE = "THIDR_PARTY_TYPE";

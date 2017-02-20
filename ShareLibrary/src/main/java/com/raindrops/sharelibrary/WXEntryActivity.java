@@ -61,9 +61,11 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
             }
         } else {
             if (BaseResp.ErrCode.ERR_OK == baseResp.errCode) {
-                ShareConfig.getInstance().getShareCallBack().shareSuccess();
+                if (ShareConfig.isShareCallBack())
+                    ShareConfig.getInstance().getShareCallBack().shareSuccess();
             } else {
-                ShareConfig.getInstance().getShareCallBack().shareError();
+                if (ShareConfig.isShareCallBack())
+                    ShareConfig.getInstance().getShareCallBack().shareError();
             }
         }
         Log.e("msg", msg);
