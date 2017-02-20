@@ -9,6 +9,8 @@ import android.os.Bundle;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.raindrops.sharelibrary.AppManager;
+import com.raindrops.sharelibrary.LoginShareActivity;
 import com.raindrops.sharelibrary.ShareConfig;
 import com.raindrops.sharelibrary.ShareIntentStaticCode;
 import com.sina.weibo.sdk.api.WebpageObject;
@@ -117,6 +119,7 @@ public class ShareUtil {
                                 .THIDR_PARTY_WECHAT_FRIEND_CIRCLE ? SendMessageToWX
                                 .Req.WXSceneTimeline : SendMessageToWX.Req.WXSceneSession;
                         api.sendReq(req);
+                        AppManager.getAppManager().finishActivity(LoginShareActivity.class);
                     }
                 });
     }

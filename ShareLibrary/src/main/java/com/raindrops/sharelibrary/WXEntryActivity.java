@@ -22,7 +22,6 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.e("onCreate", "onCreate");
         api = WXAPIFactory.createWXAPI(this, ShareConfig.getInstance().wechatAPPID);
         api.handleIntent(getIntent(), this);
     }
@@ -36,7 +35,6 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 
     @Override
     public void onReq(BaseReq baseReq) {
-
     }
 
     @Override

@@ -61,7 +61,7 @@ public class LoginUtil {
     private IThirdPartyLoginCallback iThirdPartyLoginCallback;
 
     private IUiListener uiListener;
-
+    private Oauth2AccessToken mAccessToken;
 
     private LoginUtil() {
     }
@@ -91,8 +91,14 @@ public class LoginUtil {
             @Override
             public void onComplete(Object o) {
                 JSONObject jsonObject = (JSONObject) o;
-                initOpenidAndToken(jsonObject);
-                getQQUserInfo();
+                try {
+                    if (jsonObject.getInt("ret") == 0) {
+                        initOpenidAndToken(jsonObject);
+                        getQQUserInfo();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
@@ -123,12 +129,18 @@ public class LoginUtil {
     }
 
     public void loginWeibo() {
+
+        if (mAccessToken != null && mAccessToken.isSessionValid()) {
+            getWeiboUserInfo(mAccessToken.getToken(), mAccessToken.getUid());
+            return;
+        }
+
         if (mSsoHandler == null)
             mSsoHandler = new SsoHandler((Activity) mContext, authInfo);
         mSsoHandler.authorize(new WeiboAuthListener() {
             @Override
             public void onComplete(Bundle bundle) {
-                Oauth2AccessToken mAccessToken = Oauth2AccessToken.parseAccessToken(bundle);
+                mAccessToken = Oauth2AccessToken.parseAccessToken(bundle);
                 if (mAccessToken.isSessionValid()) {
                     // 保存 Token 到 SharedPreferences
                     getWeiboUserInfo(mAccessToken.getToken(), mAccessToken.getUid());
@@ -206,8 +218,9 @@ public class LoginUtil {
 
     public void loginToQQ() {
         if (!mTencent.isSessionValid()) {
-            Log.e("loginToQQ", "loginToQQ");
             mTencent.login((Activity) mContext, "get_simple_userinfo", uiListener);
+        } else {
+            getQQUserInfo();
         }
     }
 

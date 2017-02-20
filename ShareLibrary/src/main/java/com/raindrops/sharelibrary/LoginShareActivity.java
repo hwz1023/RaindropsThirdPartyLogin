@@ -1,8 +1,8 @@
 package com.raindrops.sharelibrary;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.raindrops.sharelibrary.util.LoginUtil;
@@ -13,7 +13,7 @@ import com.sina.weibo.sdk.constant.WBConstants;
 
 import static com.raindrops.sharelibrary.ShareIntentStaticCode.THIDR_PARTY_SHARE_IMAGEURL;
 
-public class LoginShareActivity extends AppCompatActivity implements IWeiboHandler.Response {
+public class LoginShareActivity extends Activity implements IWeiboHandler.Response {
     private LoginUtil loginUtil;
     private ShareUtil shareUtil;
 
