@@ -70,6 +70,7 @@ public class LoginShareActivity extends AppCompatActivity implements IWeiboHandl
         if (bundle.containsKey(THIDR_PARTY_SHARE_IMAGEURL))
             imageUrl = bundle.getString(THIDR_PARTY_SHARE_IMAGEURL);
         switch (thirdPartyPlatForm) {
+            case ShareIntentStaticCode.THIDR_PARTY_QQ_ZONE:
             case ShareIntentStaticCode.THIDR_PARTY_QQ:
                 shareUtil.shareToQQ(webUrl, title, des, imageUrl, thirdPartyPlatForm);
                 break;
