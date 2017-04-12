@@ -83,6 +83,11 @@ public class ShareUtil {
         };
     }
 
+
+    public boolean isInstallWechat() {
+        return api.isWXAppInstalled();
+    }
+
     /**
      * @param webUrl
      * @param title

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.raindrops.sharelibrary.util.LoginUtil;
 import com.raindrops.sharelibrary.util.ShareUtil;
@@ -52,6 +53,12 @@ public class LoginShareActivity extends Activity implements IWeiboHandler.Respon
                 loginUtil.loginToQQ();
                 break;
             case ShareIntentStaticCode.THIDR_PARTY_WECHAT:
+                if (!shareUtil.isInstallWechat()) {
+                    Toast.makeText(this.getApplicationContext(), "还没有安装微信", Toast.LENGTH_SHORT).
+                            show();
+                    finish();
+                    return;
+                }
                 loginUtil.loginToWechat();
                 break;
             case ShareIntentStaticCode.THIDR_PARTY_WEIBO:
@@ -77,6 +84,12 @@ public class LoginShareActivity extends Activity implements IWeiboHandler.Respon
                 break;
             case ShareIntentStaticCode.THIDR_PARTY_WECHAT_FRIEND_CIRCLE:
             case ShareIntentStaticCode.THIDR_PARTY_WECHAT:
+                if (!shareUtil.isInstallWechat()) {
+                    Toast.makeText(this.getApplicationContext(), "还没有安装微信", Toast.LENGTH_SHORT).
+                            show();
+                    finish();
+                    return;
+                }
                 shareUtil.shareToWechat(webUrl, title, des, imageUrl, thirdPartyPlatForm);
                 break;
             case ShareIntentStaticCode.THIDR_PARTY_WEIBO:
