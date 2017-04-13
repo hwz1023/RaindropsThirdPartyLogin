@@ -53,7 +53,7 @@ public class LoginShareActivity extends Activity implements IWeiboHandler.Respon
                 loginUtil.loginToQQ();
                 break;
             case ShareIntentStaticCode.THIDR_PARTY_WECHAT:
-                if (!shareUtil.isInstallWechat()) {
+                if (!loginUtil.isInstallWechat()) {
                     Toast.makeText(this.getApplicationContext(), "还没有安装微信", Toast.LENGTH_SHORT).
                             show();
                     finish();

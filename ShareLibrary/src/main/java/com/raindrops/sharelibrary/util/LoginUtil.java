@@ -282,7 +282,9 @@ public class LoginUtil {
             }
         });
     }
-
+    public boolean isInstallWechat() {
+        return api.isWXAppInstalled();
+    }
     /**
      * 获取微信登录token
      *
