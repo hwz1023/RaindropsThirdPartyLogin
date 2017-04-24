@@ -258,7 +258,8 @@ public class LoginUtil {
                     if (ret == 0) {
                         iThirdPartyLoginCallback.onComplete(
                                 mTencent.getQQToken().getOpenId(), jsonObject.getString("nickname"),
-                                "3", jsonObject.getString("figureurl_qq_2"), "n"
+                                "3", jsonObject.getString("figureurl_qq_2"), jsonObject.getString("gender")
+                                        .equals("女") ? "f" : "m"
                         );
                     } else {
                         iThirdPartyLoginCallback.onError(ret, ShareIntentStaticCode
@@ -282,9 +283,11 @@ public class LoginUtil {
             }
         });
     }
+
     public boolean isInstallWechat() {
         return api.isWXAppInstalled();
     }
+
     /**
      * 获取微信登录token
      *
