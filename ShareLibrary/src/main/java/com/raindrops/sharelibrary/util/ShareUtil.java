@@ -101,7 +101,7 @@ public class ShareUtil {
         Glide.with(mContext)
                 .load(imageUrl).asBitmap()
                 .toBytes()
-                .into(new SimpleTarget<byte[]>(120, 120) {
+                .into(new SimpleTarget<byte[]>(90, 90) {
                     public void onLoadFailed(Exception e, Drawable errorDrawable) {
                         super.onLoadFailed(e, errorDrawable);
                         if (ShareConfig.isShareCallBack())
@@ -151,7 +151,7 @@ public class ShareUtil {
         Glide.with(mContext)
                 .load(imageUrl).asBitmap()
                 .toBytes()
-                .into(new SimpleTarget<byte[]>(120, 120) {
+                .into(new SimpleTarget<byte[]>(90, 90) {
                     @Override
                     public void onLoadFailed(Exception e, Drawable errorDrawable) {
                         super.onLoadFailed(e, errorDrawable);
