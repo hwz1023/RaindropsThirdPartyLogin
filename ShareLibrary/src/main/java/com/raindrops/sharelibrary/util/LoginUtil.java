@@ -103,14 +103,16 @@ public class LoginUtil {
 
             @Override
             public void onError(UiError uiError) {
-                iThirdPartyLoginCallback.onError(-100, ShareIntentStaticCode.THIDR_PARTY_QQ,
-                        "授权失败");
+                if (iThirdPartyLoginCallback != null)
+                    iThirdPartyLoginCallback.onError(-100, ShareIntentStaticCode.THIDR_PARTY_QQ,
+                            "授权失败");
             }
 
             @Override
             public void onCancel() {
-                iThirdPartyLoginCallback.onError(-100, ShareIntentStaticCode.THIDR_PARTY_QQ,
-                        "授权失败");
+                if (iThirdPartyLoginCallback != null)
+                    iThirdPartyLoginCallback.onError(-100, ShareIntentStaticCode.THIDR_PARTY_QQ,
+                            "授权失败");
             }
         };
     }
@@ -146,22 +148,25 @@ public class LoginUtil {
                     getWeiboUserInfo(mAccessToken.getToken(), mAccessToken.getUid());
                 } else {
                     // 当您注册的应用程序签名不正确时，就会收到 Code，请确保签名正确
-                    iThirdPartyLoginCallback.onError(-100, ShareIntentStaticCode
-                            .THIDR_PARTY_WEIBO, "授权失败");
+                    if (iThirdPartyLoginCallback != null)
+                        iThirdPartyLoginCallback.onError(-100, ShareIntentStaticCode
+                                .THIDR_PARTY_WEIBO, "授权失败");
                 }
 
             }
 
             @Override
             public void onWeiboException(WeiboException e) {
-                iThirdPartyLoginCallback.onError(-100, ShareIntentStaticCode
-                        .THIDR_PARTY_WEIBO, "授权失败");
+                if (iThirdPartyLoginCallback != null)
+                    iThirdPartyLoginCallback.onError(-100, ShareIntentStaticCode
+                            .THIDR_PARTY_WEIBO, "授权失败");
             }
 
             @Override
             public void onCancel() {
-                iThirdPartyLoginCallback.onError(-100, ShareIntentStaticCode
-                        .THIDR_PARTY_WEIBO, "授权失败");
+                if (iThirdPartyLoginCallback != null)
+                    iThirdPartyLoginCallback.onError(-100, ShareIntentStaticCode
+                            .THIDR_PARTY_WEIBO, "授权失败");
             }
         });
     }
@@ -180,8 +185,9 @@ public class LoginUtil {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        iThirdPartyLoginCallback.onError(-100, ShareIntentStaticCode
-                                .THIDR_PARTY_WEIBO, "授权失败");
+                        if (iThirdPartyLoginCallback != null)
+                            iThirdPartyLoginCallback.onError(-100, ShareIntentStaticCode
+                                    .THIDR_PARTY_WEIBO, "授权失败");
                     }
 
                     @Override
@@ -189,8 +195,9 @@ public class LoginUtil {
                         try {
                             JSONObject jsonObject = new JSONObject(response);
                             if (!jsonObject.isNull("error_code")) {
-                                iThirdPartyLoginCallback.onError(-100, ShareIntentStaticCode
-                                        .THIDR_PARTY_WEIBO, "授权失败");
+                                if (iThirdPartyLoginCallback != null)
+                                    iThirdPartyLoginCallback.onError(-100, ShareIntentStaticCode
+                                            .THIDR_PARTY_WEIBO, "授权失败");
                             } else {
                                 if (iThirdPartyLoginCallback != null)
                                     iThirdPartyLoginCallback.onComplete(
@@ -201,8 +208,9 @@ public class LoginUtil {
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            iThirdPartyLoginCallback.onError(-100, ShareIntentStaticCode
-                                    .THIDR_PARTY_WEIBO, "授权失败");
+                            if (iThirdPartyLoginCallback != null)
+                                iThirdPartyLoginCallback.onError(-100, ShareIntentStaticCode
+                                        .THIDR_PARTY_WEIBO, "授权失败");
                         }
                     }
                 });
@@ -256,14 +264,16 @@ public class LoginUtil {
                     JSONObject jsonObject = (JSONObject) o;
                     int ret = jsonObject.getInt("ret");
                     if (ret == 0) {
-                        iThirdPartyLoginCallback.onComplete(
-                                mTencent.getQQToken().getOpenId(), jsonObject.getString("nickname"),
-                                "3", jsonObject.getString("figureurl_qq_2"), jsonObject.getString("gender")
-                                        .equals("女") ? "f" : "m"
-                        );
+                        if (iThirdPartyLoginCallback != null)
+                            iThirdPartyLoginCallback.onComplete(
+                                    mTencent.getQQToken().getOpenId(), jsonObject.getString("nickname"),
+                                    "3", jsonObject.getString("figureurl_qq_2"), jsonObject.getString("gender")
+                                            .equals("女") ? "f" : "m"
+                            );
                     } else {
-                        iThirdPartyLoginCallback.onError(ret, ShareIntentStaticCode
-                                .THIDR_PARTY_QQ, jsonObject.getString("msg"));
+                        if (iThirdPartyLoginCallback != null)
+                            iThirdPartyLoginCallback.onError(ret, ShareIntentStaticCode
+                                    .THIDR_PARTY_QQ, jsonObject.getString("msg"));
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -272,14 +282,16 @@ public class LoginUtil {
 
             @Override
             public void onError(UiError uiError) {
-                iThirdPartyLoginCallback.onError(uiError.errorCode, ShareIntentStaticCode
-                        .THIDR_PARTY_QQ, uiError.errorMessage);
+                if (iThirdPartyLoginCallback != null)
+                    iThirdPartyLoginCallback.onError(uiError.errorCode, ShareIntentStaticCode
+                            .THIDR_PARTY_QQ, uiError.errorMessage);
             }
 
             @Override
             public void onCancel() {
-                iThirdPartyLoginCallback.onError(-100, ShareIntentStaticCode
-                        .THIDR_PARTY_QQ, "授权失败");
+                if (iThirdPartyLoginCallback != null)
+                    iThirdPartyLoginCallback.onError(-100, ShareIntentStaticCode
+                            .THIDR_PARTY_QQ, "授权失败");
             }
         });
     }
@@ -304,10 +316,11 @@ public class LoginUtil {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        LoginUtil.getInstance().iThirdPartyLoginCallback.onError(-100,
-                                ShareIntentStaticCode
-                                        .THIDR_PARTY_WECHAT,
-                                "授权失败");
+                        if (LoginUtil.getInstance().iThirdPartyLoginCallback != null)
+                            LoginUtil.getInstance().iThirdPartyLoginCallback.onError(-100,
+                                    ShareIntentStaticCode
+                                            .THIDR_PARTY_WECHAT,
+                                    "授权失败");
                     }
 
                     @Override
@@ -315,19 +328,21 @@ public class LoginUtil {
                         try {
                             JSONObject jsonObject = new JSONObject(response);
                             if (!jsonObject.isNull("errcode")) {
-                                LoginUtil.getInstance().iThirdPartyLoginCallback.onError(-100,
-                                        ShareIntentStaticCode
-                                                .THIDR_PARTY_WECHAT,
-                                        "授权失败");
+                                if (LoginUtil.getInstance().iThirdPartyLoginCallback != null)
+                                    LoginUtil.getInstance().iThirdPartyLoginCallback.onError(-100,
+                                            ShareIntentStaticCode
+                                                    .THIDR_PARTY_WECHAT,
+                                            "授权失败");
                             } else {
                                 getUserInfo(jsonObject.getString("access_token"), jsonObject
                                         .getString("openid"));
                             }
                         } catch (JSONException e) {
-                            LoginUtil.getInstance().iThirdPartyLoginCallback.onError(-100,
-                                    ShareIntentStaticCode
-                                            .THIDR_PARTY_WECHAT,
-                                    "授权失败");
+                            if (LoginUtil.getInstance().iThirdPartyLoginCallback != null)
+                                LoginUtil.getInstance().iThirdPartyLoginCallback.onError(-100,
+                                        ShareIntentStaticCode
+                                                .THIDR_PARTY_WECHAT,
+                                        "授权失败");
                             e.printStackTrace();
                         }
                     }
@@ -350,10 +365,11 @@ public class LoginUtil {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        LoginUtil.getInstance().iThirdPartyLoginCallback.onError(-100,
-                                ShareIntentStaticCode
-                                        .THIDR_PARTY_WECHAT,
-                                "授权失败");
+                        if (LoginUtil.getInstance().iThirdPartyLoginCallback != null)
+                            LoginUtil.getInstance().iThirdPartyLoginCallback.onError(-100,
+                                    ShareIntentStaticCode
+                                            .THIDR_PARTY_WECHAT,
+                                    "授权失败");
                     }
 
                     @Override
@@ -362,25 +378,28 @@ public class LoginUtil {
                             Log.e("getUserInfo", response);
                             JSONObject jsonObject = new JSONObject(response);
                             if (!jsonObject.isNull("errcode")) {
-                                LoginUtil.getInstance().iThirdPartyLoginCallback.onError(-100,
-                                        ShareIntentStaticCode
-                                                .THIDR_PARTY_WECHAT,
-                                        "授权失败");
+                                if (LoginUtil.getInstance().iThirdPartyLoginCallback != null)
+                                    LoginUtil.getInstance().iThirdPartyLoginCallback.onError(-100,
+                                            ShareIntentStaticCode
+                                                    .THIDR_PARTY_WECHAT,
+                                            "授权失败");
                             } else {
-                                LoginUtil.getInstance().iThirdPartyLoginCallback.onComplete(
-                                        jsonObject.getString("openid"),
-                                        jsonObject.getString("nickname"),
-                                        "1", jsonObject.getString("headimgurl"),
-                                        jsonObject.getInt("sex") == 1 ? "m" :
-                                                jsonObject.getInt("sex") == 2 ? "f" : "n");
+                                if (LoginUtil.getInstance().iThirdPartyLoginCallback != null)
+                                    LoginUtil.getInstance().iThirdPartyLoginCallback.onComplete(
+                                            jsonObject.getString("openid"),
+                                            jsonObject.getString("nickname"),
+                                            "1", jsonObject.getString("headimgurl"),
+                                            jsonObject.getInt("sex") == 1 ? "m" :
+                                                    jsonObject.getInt("sex") == 2 ? "f" : "n");
 
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            LoginUtil.getInstance().iThirdPartyLoginCallback.onError(-100,
-                                    ShareIntentStaticCode
-                                            .THIDR_PARTY_WECHAT,
-                                    "授权失败");
+                            if (LoginUtil.getInstance().iThirdPartyLoginCallback != null)
+                                LoginUtil.getInstance().iThirdPartyLoginCallback.onError(-100,
+                                        ShareIntentStaticCode
+                                                .THIDR_PARTY_WECHAT,
+                                        "授权失败");
                         }
                     }
                 });
