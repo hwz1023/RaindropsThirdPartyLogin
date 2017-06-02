@@ -363,7 +363,7 @@ public class LoginUtil {
      * @param access_token
      * @param openid
      */
-    public static void getUserInfo(String access_token, String openid) {
+    public static void getUserInfo(final String access_token, final String openid) {
         new Thread(new Runnable() {
             @Override
             public void run() {
