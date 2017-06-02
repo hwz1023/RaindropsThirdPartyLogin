@@ -361,6 +361,7 @@ public class LoginUtil {
         OkHttpUtils.get().url("https://api.weixin.qq.com/sns/userinfo")
                 .addParams("access_token", access_token)
                 .addParams("openid", openid)
+                .addParams("lang", "en")
                 .build()
                 .execute(new StringCallback() {
                     @Override
