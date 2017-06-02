@@ -10,6 +10,7 @@ import android.util.Log;
 import com.raindrops.sharelibrary.ShareConfig;
 import com.raindrops.sharelibrary.ShareIntentStaticCode;
 import com.raindrops.sharelibrary.callback.IThirdPartyLoginCallback;
+import com.raindrops.sharelibrary.callback.MyStringCallback;
 import com.sina.weibo.sdk.auth.AuthInfo;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.auth.WeiboAuthListener;
@@ -363,7 +364,7 @@ public class LoginUtil {
                 .addParams("openid", openid)
                 .addParams("lang", "en")
                 .build()
-                .execute(new StringCallback() {
+                .execute(new MyStringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
                         if (LoginUtil.getInstance().iThirdPartyLoginCallback != null)
