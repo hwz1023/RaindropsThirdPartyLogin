@@ -10,7 +10,6 @@ import android.util.Log;
 import com.raindrops.sharelibrary.ShareConfig;
 import com.raindrops.sharelibrary.ShareIntentStaticCode;
 import com.raindrops.sharelibrary.callback.IThirdPartyLoginCallback;
-import com.raindrops.sharelibrary.callback.MyStringCallback;
 import com.sina.weibo.sdk.auth.AuthInfo;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.auth.WeiboAuthListener;
@@ -362,9 +361,9 @@ public class LoginUtil {
         OkHttpUtils.get().url("https://api.weixin.qq.com/sns/userinfo")
                 .addParams("access_token", access_token)
                 .addParams("openid", openid)
-                .addParams("lang", "en")
+                .addParams("lang", "zh_CN")
                 .build()
-                .execute(new MyStringCallback() {
+                .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
                         if (LoginUtil.getInstance().iThirdPartyLoginCallback != null)
