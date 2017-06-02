@@ -29,6 +29,13 @@ import com.zhy.http.okhttp.callback.StringCallback;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -357,52 +364,100 @@ public class LoginUtil {
      * @param openid
      */
     public static void getUserInfo(String access_token, String openid) {
-        Log.e("access_token", access_token);
-        OkHttpUtils.get().url("https://api.weixin.qq.com/sns/userinfo")
-                .addParams("access_token", access_token)
-                .addParams("openid", openid)
-                .addParams("lang", "zh_CN")
-                .build()
-                .execute(new StringCallback() {
-                    @Override
-                    public void onError(Call call, Exception e, int id) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //获取用户信息
+                String getUserInfoUrl = "https://api.weixin.qq.com/sns/userinfo?access_token=" + access_token + "&openid=" + openid + "&lang=zh_CN";
+                URL url1 = null;
+                try {
+                    url1 = new URL(getUserInfoUrl);
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
+                // 将返回的输入流转换成字符串
+                InputStream inputStream = null;
+                try {
+                    HttpURLConnection urlConnection = (HttpURLConnection) url1.openConnection();
+                    inputStream = urlConnection.getInputStream();
+                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
+                    BufferedReader in = new BufferedReader(inputStreamReader);
+                    String jsonUserStr = in.readLine().toString();
+// 释放资源
+                    inputStream.close();
+                    inputStream = null;
+                    urlConnection.disconnect();
+
+                    JSONObject jsonObject = new JSONObject(jsonUserStr);
+                    if (!jsonObject.isNull("errcode")) {
                         if (LoginUtil.getInstance().iThirdPartyLoginCallback != null)
                             LoginUtil.getInstance().iThirdPartyLoginCallback.onError(-100,
                                     ShareIntentStaticCode
                                             .THIDR_PARTY_WECHAT,
                                     "授权失败");
-                    }
+                    } else {
+                        if (LoginUtil.getInstance().iThirdPartyLoginCallback != null)
+                            LoginUtil.getInstance().iThirdPartyLoginCallback.onComplete(
+                                    jsonObject.getString("openid"),
+                                    jsonObject.getString("nickname"),
+                                    "1", jsonObject.getString("headimgurl"),
+                                    jsonObject.getInt("sex") == 1 ? "m" :
+                                            jsonObject.getInt("sex") == 2 ? "f" : "n");
 
-                    @Override
-                    public void onResponse(String response, int id) {
-                        try {
-                            Log.e("getUserInfo", response);
-                            JSONObject jsonObject = new JSONObject(response);
-                            if (!jsonObject.isNull("errcode")) {
-                                if (LoginUtil.getInstance().iThirdPartyLoginCallback != null)
-                                    LoginUtil.getInstance().iThirdPartyLoginCallback.onError(-100,
-                                            ShareIntentStaticCode
-                                                    .THIDR_PARTY_WECHAT,
-                                            "授权失败");
-                            } else {
-                                if (LoginUtil.getInstance().iThirdPartyLoginCallback != null)
-                                    LoginUtil.getInstance().iThirdPartyLoginCallback.onComplete(
-                                            jsonObject.getString("openid"),
-                                            jsonObject.getString("nickname"),
-                                            "1", jsonObject.getString("headimgurl"),
-                                            jsonObject.getInt("sex") == 1 ? "m" :
-                                                    jsonObject.getInt("sex") == 2 ? "f" : "n");
-
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            if (LoginUtil.getInstance().iThirdPartyLoginCallback != null)
-                                LoginUtil.getInstance().iThirdPartyLoginCallback.onError(-100,
-                                        ShareIntentStaticCode
-                                                .THIDR_PARTY_WECHAT,
-                                        "授权失败");
-                        }
                     }
-                });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }).start();
+//        OkHttpUtils.get().url("https://api.weixin.qq.com/sns/userinfo")
+//                .addParams("access_token", access_token)
+//                .addParams("openid", openid)
+//                .addParams("lang", "zh_CN")
+//                .build()
+//                .execute(new StringCallback() {
+//                    @Override
+//                    public void onError(Call call, Exception e, int id) {
+//                        if (LoginUtil.getInstance().iThirdPartyLoginCallback != null)
+//                            LoginUtil.getInstance().iThirdPartyLoginCallback.onError(-100,
+//                                    ShareIntentStaticCode
+//                                            .THIDR_PARTY_WECHAT,
+//                                    "授权失败");
+//                    }
+//
+//                    @Override
+//                    public void onResponse(String response, int id) {
+//                        try {
+//                            Log.e("getUserInfo", response);
+//                            JSONObject jsonObject = new JSONObject(response);
+//                            if (!jsonObject.isNull("errcode")) {
+//                                if (LoginUtil.getInstance().iThirdPartyLoginCallback != null)
+//                                    LoginUtil.getInstance().iThirdPartyLoginCallback.onError(-100,
+//                                            ShareIntentStaticCode
+//                                                    .THIDR_PARTY_WECHAT,
+//                                            "授权失败");
+//                            } else {
+//                                if (LoginUtil.getInstance().iThirdPartyLoginCallback != null)
+//                                    LoginUtil.getInstance().iThirdPartyLoginCallback.onComplete(
+//                                            jsonObject.getString("openid"),
+//                                            jsonObject.getString("nickname"),
+//                                            "1", jsonObject.getString("headimgurl"),
+//                                            jsonObject.getInt("sex") == 1 ? "m" :
+//                                                    jsonObject.getInt("sex") == 2 ? "f" : "n");
+//
+//                            }
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                            if (LoginUtil.getInstance().iThirdPartyLoginCallback != null)
+//                                LoginUtil.getInstance().iThirdPartyLoginCallback.onError(-100,
+//                                        ShareIntentStaticCode
+//                                                .THIDR_PARTY_WECHAT,
+//                                        "授权失败");
+//                        }
+//                    }
+//                });
     }
 }
