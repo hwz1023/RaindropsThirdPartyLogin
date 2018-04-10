@@ -43,11 +43,18 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
         switch (baseResp.errCode) {
             case BaseResp.ErrCode.ERR_OK:
                 //			result = R.string.errcode_success
-                if (baseResp instanceof SendAuth.Resp && ShareConfig.getInstance()
-                        .getThirdPartyType() == ShareIntentStaticCode
-                        .THIDR_PARTY_LOGIN) {
+                if (baseResp instanceof SendAuth.Resp) {
                     SendAuth.Resp resp = (SendAuth.Resp) baseResp;
-                    LoginUtil.getAccessToken(resp.code);
+                    if (ShareConfig.getInstance()
+                            .getThirdPartyType() == ShareIntentStaticCode
+                            .THIDR_PARTY_LOGIN) {
+                        LoginUtil.getAccessToken(resp.code);
+                    }
+                    if (ShareConfig.getInstance()
+                            .getThirdPartyType() == ShareIntentStaticCode
+                            .THIDR_PARTY_AUTH) {
+                        ShareConfig.getInstance().getAuthCallBack().onComplete(resp.code);
+                    }
                 } else {
                     if (ShareConfig.isShareCallBack())
                         ShareConfig.getInstance().getShareCallBack().shareSuccess();
@@ -65,7 +72,14 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
         }
         Log.e("msg", msg);
         if (msg.length() > 0) {
+
+
             if (ShareConfig.getInstance().getThirdPartyType() == ShareIntentStaticCode
+                    .THIDR_PARTY_AUTH) {
+                ShareConfig.getInstance().getAuthCallBack().onError(-100,
+                        ShareIntentStaticCode
+                                .THIDR_PARTY_WECHAT, msg);
+            } else if (ShareConfig.getInstance().getThirdPartyType() == ShareIntentStaticCode
                     .THIDR_PARTY_LOGIN) {
                 Toast.makeText(this, msg, Toast.LENGTH_SHORT).
                         show();

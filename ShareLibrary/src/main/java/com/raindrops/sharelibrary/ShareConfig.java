@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.raindrops.sharelibrary.callback.ThirdPartyLoginCallback;
-import com.raindrops.sharelibrary.callback.ThirdPartyShareCallback;
+import com.raindrops.sharelibrary.callback.IThirdPartyAuthCallback;
 import com.raindrops.sharelibrary.callback.IThirdPartyLoginCallback;
 import com.raindrops.sharelibrary.callback.IThirdPartyShareCallback;
+import com.raindrops.sharelibrary.callback.ThirdPartyAuthCallback;
+import com.raindrops.sharelibrary.callback.ThirdPartyLoginCallback;
+import com.raindrops.sharelibrary.callback.ThirdPartyShareCallback;
 
 /**
  * Created by huangweizhou on 2016/12/30.
@@ -28,6 +30,9 @@ public class ShareConfig {
     public String weiboScope;
 
     private IThirdPartyLoginCallback thirdPartyLoginCallback;
+
+
+    private IThirdPartyAuthCallback thirdPartyAuthCallback;
 
     private IThirdPartyShareCallback thirdPartyShareCallback;
 
@@ -65,8 +70,17 @@ public class ShareConfig {
         return this;
     }
 
+    public ShareConfig bindAuthCallback(ThirdPartyAuthCallback thirdPartyAuthCallback) {
+        this.thirdPartyAuthCallback = thirdPartyAuthCallback;
+        return this;
+    }
+
     public IThirdPartyLoginCallback getLoginCallBack() {
         return thirdPartyLoginCallback;
+    }
+
+    public IThirdPartyAuthCallback getAuthCallBack() {
+        return thirdPartyAuthCallback;
     }
 
     public ShareConfig bindShareCallback(ThirdPartyShareCallback thirdPartyShareCallback) {
