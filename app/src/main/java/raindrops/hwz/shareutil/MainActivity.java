@@ -1,10 +1,9 @@
 package raindrops.hwz.shareutil;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import com.longene.mashangwan.R;
 import com.raindrops.sharelibrary.ShareConfig;
 import com.raindrops.sharelibrary.ShareIntentStaticCode;
 import com.raindrops.sharelibrary.callback.ThirdPartyLoginCallback;
@@ -12,7 +11,7 @@ import com.raindrops.sharelibrary.callback.ThirdPartyShareCallback;
 import com.raindrops.sharelibrary.util.LoginUtil;
 import com.raindrops.sharelibrary.util.ShareUtil;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
     private LoginUtil loginUtil;
     ShareUtil shareUtil;
 
