@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.longene.mashangwan.R;
 import com.raindrops.sharelibrary.ShareConfig;
 import com.raindrops.sharelibrary.ShareIntentStaticCode;
 import com.raindrops.sharelibrary.callback.ThirdPartyLoginCallback;
