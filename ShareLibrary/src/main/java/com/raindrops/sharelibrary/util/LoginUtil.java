@@ -82,11 +82,15 @@ public class LoginUtil {
                 //其他配置
                 .build();
         OkHttpUtils.initClient(okHttpClient);
-        mTencent = Tencent.createInstance(ShareConfig.getInstance().qqAPPID, mContext
-                .getApplicationContext());
-        authInfo = new AuthInfo(mContext, ShareConfig.getInstance().weiboKey, ShareConfig
-                .getInstance().weiboRedirectUrl,
-                ShareConfig.getInstance().weiboScope);
+        if (ShareConfig.getInstance().qqAPPID != null && ShareConfig.getInstance().qqAPPID.length() > 0) {
+            mTencent = Tencent.createInstance(ShareConfig.getInstance().qqAPPID, mContext
+                    .getApplicationContext());
+        }
+        if (ShareConfig.getInstance().weiboKey != null && ShareConfig.getInstance().weiboKey.length() > 0) {
+            authInfo = new AuthInfo(mContext, ShareConfig.getInstance().weiboKey, ShareConfig
+                    .getInstance().weiboRedirectUrl,
+                    ShareConfig.getInstance().weiboScope);
+        }
         uiListener = new IUiListener() {
             @Override
             public void onComplete(Object o) {

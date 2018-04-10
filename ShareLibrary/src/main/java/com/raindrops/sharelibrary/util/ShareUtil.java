@@ -57,11 +57,15 @@ public class ShareUtil {
     public ShareUtil(Context mContext) {
         this.mContext = mContext;
         api = WXAPIFactory.createWXAPI(mContext, ShareConfig.getInstance().wechatAPPID);
-        // 创建微博分享接口实例
-        mWeiboShareAPI = WeiboShareSDK.createWeiboAPI(mContext, ShareConfig.getInstance().weiboKey);
-        mWeiboShareAPI.registerApp();
-        mTencent = Tencent.createInstance(ShareConfig.getInstance().qqAPPID, mContext
-                .getApplicationContext());
+        if (ShareConfig.getInstance().weiboKey != null && ShareConfig.getInstance().weiboKey.length() > 0) {
+            // 创建微博分享接口实例
+            mWeiboShareAPI = WeiboShareSDK.createWeiboAPI(mContext, ShareConfig.getInstance().weiboKey);
+            mWeiboShareAPI.registerApp();
+        }
+        if (ShareConfig.getInstance().qqAPPID != null && ShareConfig.getInstance().qqAPPID.length() > 0) {
+            mTencent = Tencent.createInstance(ShareConfig.getInstance().qqAPPID, mContext
+                    .getApplicationContext());
+        }
         uiListener = new IUiListener() {
             @Override
             public void onComplete(Object o) {
